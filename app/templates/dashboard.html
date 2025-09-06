@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>气象数据仪表盘</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+    <style>
+        :root {
+            --primary-light: #a8d8ea; /* 浅蓝色 */
+            --primary-medium: #78c4d4; /* 中等蓝色 */
+            --accent-light: #f9c5d1; /* 浅粉色 */
+            --accent-medium: #f2789f; /* 中等粉色 */
+            --light-bg: #f8f9fa;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --text-dark: #37474F;
+            --text-light: #78909C;
+            --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e2e8f0 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-medium) 0%, var(--accent-medium) 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg,
+                transparent, transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent, transparent);
+            animation: shine 8s infinite linear;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(0deg) translateX(-50%); }
+            100% { transform: rotate(360deg) translateX(-50%); }
+        }
+
+        .dashboard-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .stats-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s;
+            border-left: 4px solid var(--primary-medium);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--primary-medium);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .chart-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--card-shadow);
+            height: 380px;
+            border-top: 3px solid var(--primary-medium);
+        }
+
+        .chart-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-medium);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .chart {
+            height: 300px;
+            width: 100%;
+        }
+
+        .city-selector {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--card-shadow);
+            border-left: 4px solid var(--primary-medium);
+        }
+
+        .control-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-right: 10px;
+        }
+
+        .date-selector {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--card-shadow);
+            border-left: 4px solid var(--accent-medium);
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            transition: transform 0.3s;
+            border-top: 3px solid var(--primary-medium);
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .summary-icon {
+            font-size: 3rem;
+            color: var(--primary-medium);
+            margin-bottom: 15px;
+        }
+
+        .summary-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-medium);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .comparison-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            height: 380px;
+            border-top: 3px solid var(--accent-medium);
+        }
+
+        .comparison-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-medium);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .comparison-chart {
+            height: 300px;
+            width: 100%;
+        }
+
+        /* 返回首页按钮样式 */
+        .home-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--primary-medium);
+            border: none;
+            border-radius: 50px;
+            padding: 10px 20px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+        }
+
+        .home-button:hover {
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .home-button i {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                padding: 20px;
+            }
+
+            .dashboard-title {
+                font-size: 1.8rem;
+            }
+
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                padding: 15px;
+            }
+
+            .home-button {
+                top: 15px;
+                right: 15px;
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- 仪表盘头部 -->
+        <div class="dashboard-header">
+            <!-- 返回首页按钮 -->
+            <button class="home-button" id="home-button">
+                <i class="bi bi-house-door"></i> 返回首页
+            </button>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="dashboard-title">气象数据仪表盘</h1>
+                    <p class="dashboard-subtitle">实时监控与分析气象数据趋势</p>
+                </div>
+                <div>
+                    <i class="bi bi-cloud-sun" style="font-size: 3rem;"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 控制面板 -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="city-selector">
+                    <div class="d-flex align-items-center">
+                        <span class="control-label">选择城市:</span>
+                        <select class="form-select" id="city-select">
+                            <option value="Beijing">北京</option>
+                            <option value="Shanghai">上海</option>
+                            <option value="Guangzhou">广州</option>
+                            <option value="Shenzhen">深圳</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="date-selector">
+                    <div class="d-flex align-items-center">
+                        <span class="control-label">时间范围:</span>
+                        <select class="form-select" id="days-select">
+                            <option value="7">最近7天</option>
+                            <option value="14">最近14天</option>
+                            <option value="30">最近30天</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据概览 -->
+        <div class="data-grid">
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="bi bi-thermometer-high"></i>
+                </div>
+                <div class="summary-title">平均温度</div>
+                <div class="summary-value" id="avg-temp">-- °C</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="bi bi-droplet"></i>
+                </div>
+                <div class="summary-title">平均湿度</div>
+                <div class="summary-value" id="avg-humidity">-- %</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-icon">
+                    <i class="bi bi-wind"></i>
+                </div>
+                <div class="summary-title">平均风速</div>
+                <div class="summary-value" id="avg-wind">-- m/s</div>
+            </div>
+        </div>
+
+        <!-- 图表区域 -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="chart-container">
+                    <div class="chart-title">温度变化趋势 (°C)</div>
+                    <div id="temp-chart" class="chart"></div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="chart-container">
+                    <div class="chart-title">湿度变化趋势 (%)</div>
+                    <div id="humidity-chart" class="chart"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="chart-container">
+                    <div class="chart-title">风速变化趋势 (m/s)</div>
+                    <div id="wind-chart" class="chart"></div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="comparison-card">
+                    <div class="comparison-title">城市数据对比</div>
+                    <div id="comparison-chart" class="comparison-chart"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div class="footer">
+            <p>© 2025 智能气象云平台 | 数据更新于: <span id="update-time">--</span></p>
+        </div>
+    </div>
+
+    <script>
+        // 初始化图表
+        const tempChart = echarts.init(document.getElementById('temp-chart'));
+        const humidityChart = echarts.init(document.getElementById('humidity-chart'));
+        const windChart = echarts.init(document.getElementById('wind-chart'));
+        const comparisonChart = echarts.init(document.getElementById('comparison-chart'));
+
+        // 初始加载数据
+        loadDashboardData('Beijing', 7);
+
+        // 城市选择变化事件
+        document.getElementById('city-select').addEventListener('change', function() {
+            const days = document.getElementById('days-select').value;
+            loadDashboardData(this.value, days);
+        });
+
+        // 天数选择变化事件
+        document.getElementById('days-select').addEventListener('change', function() {
+            const city = document.getElementById('city-select').value;
+            loadDashboardData(city, this.value);
+        });
+
+        // 返回首页按钮事件 - 修复为正确路径
+        document.getElementById('home-button').addEventListener('click', function() {
+            // 返回首页 - 使用正确的路径
+            window.location.href = '/api/weather/home';
+        });
+
+        // 加载仪表盘数据函数
+        function loadDashboardData(city, days) {
+            // 显示加载状态
+            tempChart.showLoading();
+            humidityChart.showLoading();
+            windChart.showLoading();
+            comparisonChart.showLoading();
+
+            // 更新更新时间
+            document.getElementById('update-time').textContent = new Date().toLocaleString();
+
+            // 发送API请求获取温度数据
+            fetch(`/visualization/api/temperature_trend?city=${city}&days=${days}`)
+                .then(response => response.json())
+                .then(data => {
+                    // 设置温度图表 - 使用中等蓝色
+                    tempChart.setOption({
+                        tooltip: { trigger: 'axis' },
+                        grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                        xAxis: {
+                            type: 'category',
+                            data: data.dates,
+                            axisLabel: { rotate: 45 }
+                        },
+                        yAxis: { type: 'value', name: '温度 (°C)' },
+                        series: [{
+                            name: '温度',
+                            type: 'line',
+                            data: data.temperatures,
+                            smooth: true,
+                            symbol: 'circle',
+                            symbolSize: 8,
+                            lineStyle: { width: 3, color: '#78c4d4' }, // 中等蓝色
+                            itemStyle: { color: '#78c4d4' },
+                            areaStyle: { color: 'rgba(120, 196, 212, 0.1)' }
+                        }]
+                    });
+                    tempChart.hideLoading();
+
+                    // 更新平均温度
+                    const avgTemp = data.temperatures.reduce((a, b) => a + b, 0) / data.temperatures.length;
+                    document.getElementById('avg-temp').textContent = avgTemp.toFixed(1) + ' °C';
+                })
+                .catch(error => {
+                    console.error('获取温度数据失败:', error);
+                    tempChart.hideLoading();
+                });
+
+            // 加载湿度数据
+            fetch(`/visualization/api/humidity_trend?city=${city}&days=${days}`)
+                .then(response => response.json())
+                .then(data => {
+                    // 设置湿度图表 - 使用中等粉色
+                    humidityChart.setOption({
+                        tooltip: { trigger: 'axis' },
+                        grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                        xAxis: {
+                            type: 'category',
+                            data: data.dates,
+                            axisLabel: { rotate: 45 }
+                        },
+                        yAxis: { type: 'value', name: '湿度 (%)' },
+                        series: [{
+                            name: '湿度',
+                            type: 'line',
+                            data: data.humidities,
+                            smooth: true,
+                            symbol: 'circle',
+                            symbolSize: 8,
+                            lineStyle: { width: 3, color: '#f2789f' }, // 中等粉色
+                            itemStyle: { color: '#f2789f' },
+                            areaStyle: { color: 'rgba(242, 120, 159, 0.1)' }
+                        }]
+                    });
+                    humidityChart.hideLoading();
+
+                    // 更新平均湿度
+                    const avgHumidity = data.humidities.reduce((a, b) => a + b, 0) / data.humidities.length;
+                    document.getElementById('avg-humidity').textContent = avgHumidity.toFixed(1) + ' %';
+                })
+                .catch(error => {
+                    console.error('获取湿度数据失败:', error);
+                    humidityChart.hideLoading();
+                });
+
+            // 加载风速数据
+            fetch(`/visualization/api/wind_trend?city=${city}&days=${days}`)
+                .then(response => response.json())
+                .then(data => {
+                    // 设置风速图表 - 使用浅蓝色
+                    windChart.setOption({
+                        tooltip: { trigger: 'axis' },
+                        grid: { left: '3%', right: '4%', bottom: '3%', containLabel: true },
+                        xAxis: {
+                            type: 'category',
+                            data: data.dates,
+                            axisLabel: { rotate: 45 }
+                        },
+                        yAxis: { type: 'value', name: '风速 (m/s)' },
+                        series: [{
+                            name: '风速',
+                            type: 'line',
+                            data: data.wind_speeds,
+                            smooth: true,
+                            symbol: 'circle',
+                            symbolSize: 8,
+                            lineStyle: { width: 3, color: '#a8d8ea' }, // 浅蓝色
+                            itemStyle: { color: '#a8d8ea' },
+                            areaStyle: { color: 'rgba(168, 216, 234, 0.1)' }
+                        }]
+                    });
+                    windChart.hideLoading();
+
+                    // 更新平均风速
+                    const avgWind = data.wind_speeds.reduce((a, b) => a + b, 0) / data.wind_speeds.length;
+                    document.getElementById('avg-wind').textContent = avgWind.toFixed(1) + ' m/s';
+                })
+                .catch(error => {
+                    console.error('获取风速数据失败:', error);
+                    windChart.hideLoading();
+                });
+
+            // 加载对比数据
+            fetch(`/visualization/api/city_comparison?days=${days}`)
+            .then(response => response.json())
+            .then(comparisonData => {
+                // 设置对比图表
+                comparisonChart.setOption({
+                    tooltip: {
+                        trigger: 'axis',
+                        formatter: function(params) {
+                            let result = params[0].name + '<br/>';
+                            params.forEach(item => {
+                                result += item.marker + ' ' + item.seriesName + ': ' + item.value + '<br/>';
+                            });
+                            return result;
+                        }
+                    },
+                    legend: {
+                        data: ['北京', '上海', '广州', '深圳'],
+                        bottom: 10
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '15%',
+                        top: '10%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: ['温度 (°C)', '湿度 (%)', '风速 (m/s)'],
+                        axisLabel: { rotate: 0 }
+                    },
+                    yAxis: { type: 'value' },
+                    series: [
+                        {
+                            name: '北京',
+                            type: 'bar',
+                            data: [
+                                comparisonData.Beijing.temperature,
+                                comparisonData.Beijing.humidity,
+                                comparisonData.Beijing.wind_speed
+                            ],
+                            itemStyle: { color: '#e74c3c' }
+                        },
+                        {
+                            name: '上海',
+                            type: 'bar',
+                            data: [
+                                comparisonData.Shanghai.temperature,
+                                comparisonData.Shanghai.humidity,
+                                comparisonData.Shanghai.wind_speed
+                            ],
+                            itemStyle: { color: '#3498db' }
+                        },
+                        {
+                            name: '广州',
+                            type: 'bar',
+                            data: [
+                                comparisonData.Guangzhou.temperature,
+                                comparisonData.Guangzhou.humidity,
+                                comparisonData.Guangzhou.wind_speed
+                            ],
+                            itemStyle: { color: '#2ecc71' }
+                        },
+                        {
+                            name: '深圳',
+                            type: 'bar',
+                            data: [
+                                comparisonData.Shenzhen.temperature,
+                                comparisonData.Shenzhen.humidity,
+                                comparisonData.Shenzhen.wind_speed
+                            ],
+                            itemStyle: { color: '#9b59b6' }
+                        }
+                    ]
+                });
+            })
+            .catch(error => {
+                console.error('获取对比数据失败:', error);
+                comparisonChart.setOption({
+                    title: { text: '数据加载失败' },
+                    graphic: {
+                        type: 'text',
+                        left: 'center',
+                        top: 'middle',
+                        style: {
+                            text: '对比数据加载失败',
+                            fontSize: 16,
+                            fill: '#ccc'
+                        }
+                    }
+                });
+            });
+        }
+
+        // 窗口大小变化时重绘图表
+         window.addEventListener('resize', function() {
+            tempChart.resize();
+            humidityChart.resize();
+            windChart.resize();
+            comparisonChart.resize();
+        });
+    </script>
+</body>
+</html>

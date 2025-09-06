@@ -1,0 +1,29 @@
+2025-08-26 23:08:04,494 - app.utils.weather_crawler - INFO - 成功保存Beijing数据到数据库
+2025-08-26 23:08:13,645 - app.utils.weather_crawler - WARNING - OpenWeatherMap API请求超时，重试 1/3
+2025-08-26 23:08:17,311 - app.utils.weather_crawler - WARNING - OpenWeatherMap API请求超时，重试 2/3
+2025-08-26 23:08:19,921 - app.utils.weather_crawler - INFO - 成功保存Beijing数据到数据库
+2025-08-26 23:08:29,797 - app.utils.weather_crawler - WARNING - 使用本地后备数据源: Beijing
+2025-08-26 23:08:29,805 - app.utils.weather_crawler - INFO - 成功保存Beijing数据到数据库
+2025-08-26 23:26:29,088 - app.utils.weather_crawler - INFO - 成功保存Beijing数据到数据库
+2025-08-26 23:26:50,025 - app.utils.weather_crawler - INFO - 成功保存Shanghai数据到数据库
+2025-08-26 23:26:58,109 - app.utils.weather_crawler - INFO - 成功保存Guangzhou数据到数据库
+2025-08-26 23:27:08,819 - app.utils.weather_crawler - WARNING - OpenWeatherMap API请求超时，重试 1/3
+2025-08-26 23:27:12,608 - app.utils.weather_crawler - WARNING - OpenWeatherMap API请求超时，重试 2/3
+2025-08-26 23:27:16,533 - app.utils.weather_crawler - INFO - 成功保存Shenzhen数据到数据库
+2025-08-26 23:43:37,456 - app.utils.weather_crawler - WARNING - 使用本地后备数据源: Beijing
+2025-08-26 23:43:37,466 - app.utils.weather_crawler - INFO - 成功保存Beijing数据到数据库
+2025-08-26 23:43:57,034 - app.utils.weather_crawler - INFO - 成功保存Shanghai数据到数据库
+2025-08-27 09:05:39,255 - app.utils.weather_crawler - WARNING - 使用本地后备数据源: Beijing
+2025-08-27 09:05:39,265 - app.utils.weather_crawler - INFO - 成功保存Beijing数据到数据库
+2025-08-27 09:15:14,243 - app.utils.weather_crawler - INFO - 成功保存Beijing数据到数据库
+2025-08-27 09:15:36,518 - app.utils.weather_crawler - WARNING - 使用本地后备数据源: Shanghai
+2025-08-27 09:15:36,526 - app.utils.weather_crawler - INFO - 成功保存Shanghai数据到数据库
+2025-08-27 09:16:23,533 - app.utils.weather_crawler - WARNING - 使用本地后备数据源: Shanghai
+2025-08-27 09:16:23,541 - app.utils.weather_crawler - INFO - 成功保存Shanghai数据到数据库
+2025-08-27 09:23:25,993 - app.utils.weather_crawler - WARNING - 使用本地后备数据源: Beijing
+2025-08-27 09:23:26,002 - app.utils.weather_crawler - INFO - 成功保存Beijing数据到数据库
+2025-08-27 09:23:49,690 - app.utils.weather_crawler - WARNING - OpenWeatherMap API请求超时，重试 1/3
+2025-08-27 09:23:53,479 - app.utils.weather_crawler - WARNING - OpenWeatherMap API请求超时，重试 2/3
+2025-08-27 09:23:57,129 - app.utils.weather_crawler - ERROR - OpenWeatherMap API请求超时，放弃重试
+2025-08-27 09:23:57,958 - app.utils.weather_crawler - INFO - 成功保存Shanghai数据到数据库
+2025-08-27 09:30:15,013 - app.utils.weather_crawler - INFO - 成功保存Shanghai数据到数据库

@@ -1,0 +1,29 @@
+# 核心框架
+Flask==2.2.5# Web框架
+Flask-SQLAlchemy==3.0.3  # ORM操作MySQL[8](@ref)
+Flask-RESTful==0.3.10   # 构建API接口[5](@ref)
+
+# 数据库驱动
+mysqlclient==2.2.0    # MySQL官方驱动（兼容MySQL 5.7/8.0）[9,10](@ref)
+
+# 数据爬虫与处理
+requests==2.31.0      # HTTP请求（爬虫核心）[3,4](@ref)
+beautifulsoup4==4.12.2 # HTML解析[3](@ref)
+pandas==2.0.3         # 数据清洗与分析[2](@ref)
+
+# 机器学习与预测
+scikit-learn==1.3.0   # 线性回归模型（必须）[2,4](@ref)
+joblib==1.3.2         # 模型持久化存储
+
+# 可视化支持
+pyecharts==2.0.3      # ECharts的Python封装（可选但推荐）[1,6](@ref)
+
+# 环境管理
+python-dotenv==1.0.0
+
+Flask-Migrate==4.0.4
+Werkzeug==2.2.2
+Jinja2==3.0.3
+itsdangerous==2.0.1
+click==8.0.4
+numpy==1.23.5

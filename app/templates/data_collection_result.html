@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据采集结果</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-light: #a8d8ea; /* 浅蓝色 */
+            --primary-medium: #78c4d4; /* 中等蓝色 */
+            --accent-light: #f9c5d1; /* 浅粉色 */
+            --accent-medium: #f2789f; /* 中等粉色 */
+            --light-bg: #f8f9fa;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --text-dark: #37474F;
+            --text-light: #78909C;
+            --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .result-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-container::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg,
+                transparent, transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent, transparent);
+            animation: shine 8s infinite linear;
+        }
+
+        @keyframes shine {
+            0% { transform: rotate(0deg) translateX(-50%); }
+            100% { transform: rotate(360deg) translateX(-50%); }
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .result-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary-medium);
+            margin-bottom: 10px;
+        }
+
+        .result-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+
+        .data-card {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+            border-left: 4px solid var(--accent-medium);
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .data-row:last-child {
+            border-bottom: none;
+        }
+
+        .data-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            flex: 1;
+        }
+
+        .data-value {
+            font-weight: 500;
+            color: var(--primary-medium);
+            flex: 1;
+            text-align: right;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .status-success {
+            background-color: rgba(120, 196, 212, 0.2);
+            color: var(--primary-medium);
+        }
+
+        .status-error {
+            background-color: rgba(242, 120, 159, 0.2);
+            color: var(--accent-medium);
+        }
+
+        .metric-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+            margin: 0 10px;
+            box-shadow: var(--card-shadow);
+            border-top: 3px solid var(--primary-medium);
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-medium);
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-medium) 0%, var(--accent-medium) 100%);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.1);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-medium);
+            color: var(--primary-medium);
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline:hover {
+            background: rgba(120, 196, 212, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.1);
+            color: var(--primary-medium);
+        }
+
+        .weather-icon {
+            font-size: 4rem;
+            color: var(--primary-medium);
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .metric-container {
+                flex-direction: column;
+            }
+
+            .metric-card {
+                margin: 10px 0;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="result-container">
+        <div class="result-header">
+            <h1 class="result-title">数据采集结果</h1>
+            <p class="result-subtitle">天气数据采集完成</p>
+        </div>
+
+        <div class="data-card">
+            <div class="data-row">
+                <span class="data-label">城市</span>
+                <span class="data-value" id="data-city">Beijing</span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">状态</span>
+                <span class="data-value">
+                    <span class="status-badge status-success" id="data-status">成功采集</span>
+                </span>
+            </div>
+            <div class="data-row">
+                <span class="data-label">耗时</span>
+                <span class="data-value" id="data-time">0.83秒</span>
+            </div>
+        </div>
+
+        <div class="weather-icon">
+            <i class="bi bi-cloud-sun"></i>
+        </div>
+
+        <div class="metric-container">
+            <div class="metric-card">
+                <div class="metric-value" id="metric-temp">25.74°C</div>
+                <div class="metric-label">温度</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="metric-humidity">82.0%</div>
+                <div class="metric-label">湿度</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value" id="metric-wind">2.11m/s</div>
+                <div class="metric-label">风速</div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="/api/weather/home" class="btn-primary">
+                <i class="bi bi-house-door me-2"></i> 返回首页
+            </a>
+            <a href="/visualization/dashboard" class="btn-outline">
+                <i class="bi bi-graph-up me-2"></i> 查看仪表盘
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // 解析URL参数获取数据
+        function getQueryParams() {
+            const params = {};
+            const queryString = window.location.search.substring(1);
+            const pairs = queryString.split('&');
+
+            for (const pair of pairs) {
+                const [key, value] = pair.split('=');
+                params[key] = decodeURIComponent(value);
+            }
+
+            return params;
+        }
+
+        // 从URL参数中获取数据并填充页面
+        function populateData() {
+            const params = getQueryParams();
+
+            // 设置城市
+            document.getElementById('data-city').textContent = params.city || 'Beijing';
+
+            // 设置状态
+            const statusElement = document.getElementById('data-status');
+            if (params.status === 'success') {
+                statusElement.textContent = '成功采集';
+                statusElement.className = 'status-badge status-success';
+            } else {
+                statusElement.textContent = '采集失败';
+                statusElement.className = 'status-badge status-error';
+            }
+
+            // 设置时间
+            document.getElementById('data-time').textContent = `${params.time_cost || '0.83'}秒`;
+
+            // 设置指标
+            document.getElementById('metric-temp').textContent = `${params.temperature || '25.74'}°C`;
+            document.getElementById('metric-humidity').textContent = `${params.humidity || '82.0'}%`;
+            document.getElementById('metric-wind').textContent = `${params.wind_speed || '2.11'}m/s`;
+        }
+
+        // 页面加载时填充数据
+        window.onload = populateData;
+    </script>
+</body>
+</html>

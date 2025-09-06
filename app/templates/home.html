@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能气象云平台</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 5rem 0;
+            margin-bottom: 3rem;
+            border-radius: 0 0 30px 30px;
+        }
+        .feature-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            border: none;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #0d6efd;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .footer {
+            background-color: #212529;
+            color: #f8f9fa;
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+        .nav-pills .nav-link.active {
+            background-color: #0d6efd;
+        }
+        .weather-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        .city-selector {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+        }
+        /* 新增样式 */
+        .city-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .city-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .city-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #0d6efd;
+        }
+        .city-temp {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: #333;
+        }
+        .city-time {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 10px;
+        }
+        .data-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .data-item {
+            flex: 1;
+            min-width: 200px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        .data-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+        .data-value {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #6a11cb;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .forecast-btn {
+            margin-top: 10px;
+            width: 100%;
+        }
+        .crawl-btn {
+            margin-top: 10px;
+            width: 100%;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="#">
+                <i class="bi bi-cloud-sun me-2"></i>
+                <span>智能气象云</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/api/weather/home">首页</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/visualization/dashboard">仪表盘</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/api/weather/latest">最新数据</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/api/weather/crawl">数据采集</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 区域 -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-3">智能气象云平台</h1>
+            <p class="lead mb-4">基于机器学习的气象数据分析与预测系统</p>
+            <div class="d-flex justify-content-center">
+                <a href="/visualization/dashboard" class="btn btn-light btn-lg me-3">
+                    <i class="bi bi-bar-chart-line me-2"></i>进入仪表盘
+                </a>
+                <a href="/api/weather/latest" class="btn btn-outline-light btn-lg">
+                    <i class="bi bi-cloud-download me-2"></i>查看最新数据
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能特性 -->
+    <section class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">核心功能</h2>
+            <p class="text-muted">提供全面的气象数据服务</p>
+        </div>
+
+        <div class="row">
+            <!-- 数据采集 -->
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="card-icon">
+                            <i class="bi bi-download"></i>
+                        </div>
+                        <h5 class="card-title">多源数据采集</h5>
+                        <p class="card-text">从多个气象数据源实时采集数据，确保数据全面性和准确性。</p>
+                        <a href="/api/weather/crawl" class="btn btn-primary mt-2">
+                            数据采集
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据分析 -->
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="card-icon">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <h5 class="card-title">智能数据分析</h5>
+                        <p class="card-text">使用机器学习算法分析气象数据，发现隐藏模式和趋势。</p>
+                        <a href="/visualization/dashboard" class="btn btn-primary mt-2">
+                            查看分析
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 预测模型 -->
+            <div class="col-md-4">
+                <div class="card feature-card h-100">
+                    <div class="card-body text-center p-4">
+                        <div class="card-icon">
+                            <i class="bi bi-lightning-charge"></i>
+                        </div>
+                        <h5 class="card-title">精准预测模型</h5>
+                        <p class="card-text">基于线性回归和深度学习模型，提供未来天气趋势预测。</p>
+                        <a href="/api/weather/forecast/7days/Beijing" class="btn btn-primary mt-2">
+                            查看预测
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 实时数据展示 -->
+    <section class="container py-5">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">实时气象数据</h2>
+            <p class="text-muted">最新采集的气象数据概览</p>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-10 mx-auto">
+                <div class="row">
+                    {% for city, data in cities_data.items() %}
+                    <div class="col-md-3 col-6 mb-4">
+                        <div class="city-card">
+                            <div class="city-name">{{ city }}</div>
+                            <div class="weather-icon text-primary">
+                                <i class="bi bi-thermometer-high"></i>
+                            </div>
+                            <div class="city-temp">
+                                {% if data %}
+                                    {{ data.temperature }}°C
+                                {% else %}
+                                    --
+                                {% endif %}
+                            </div>
+                            <div class="city-time">
+                                {% if data %}
+                                    更新于: {{ data.timestamp.strftime('%H:%M') }}
+                                {% else %}
+                                    暂无数据
+                                {% endif %}
+                            </div>
+                            <!-- 添加历史数据按钮 -->
+                            <a href="/visualization/history/{{ city }}" class="btn btn-info history-btn">
+                            <i class="bi bi-clock-history"></i> 历史数据
+                            </a>
+                            <!-- 添加7天预测按钮 -->
+                            <a href="/api/weather/forecast/7days?city={{ city }}"
+                               class="btn btn-primary forecast-btn">
+                                7天预测
+                            </a>
+                            <!-- 添加数据采集按钮 -->
+                            <a href="/api/weather/crawl/{{ city }}" class="btn btn-primary crawl-btn">                                采集数据
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 技术栈 -->
+    <section class="bg-light py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">技术架构</h2>
+                <p class="text-muted">现代化全栈技术解决方案</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-2 col-4 text-center">
+                    <div class="p-3 bg-white rounded shadow-sm">
+                        <i class="bi bi-filetype-py fs-1 text-primary"></i>
+                        <div class="mt-2">Python</div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 text-center">
+                    <div class="p-3 bg-white rounded shadow-sm">
+                        <i class="bi bi-database fs-1 text-info"></i>
+                        <div class="mt-2">MySQL</div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 text-center">
+                    <div class="p-3 bg-white rounded shadow-sm">
+                        <i class="bi bi-diagram-3 fs-1 text-success"></i>
+                        <div class="mt-2">Flask</div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 text-center">
+                    <div class="p-3 bg-white rounded shadow-sm">
+                        <i class="bi bi-graph-up fs-1 text-warning"></i>
+                        <div class="mt-2">ECharts</div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 text-center">
+                    <div class="p-3 bg-white rounded shadow-sm">
+                        <i class="bi bi-cpu fs-1 text-danger"></i>
+                        <div class="mt-2">机器学习</div>
+                    </div>
+                </div>
+                <div class="col-md-2 col-4 text-center">
+                    <div class="p-3 bg-white rounded shadow-sm">
+                        <i class="bi bi-cloud-arrow-down fs-1 text-secondary"></i>
+                        <div class="mt-2">数据爬虫</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4 mb-lg-0">
+                    <h5 class="text-white mb-4">
+                        <i class="bi bi-cloud-sun me-2"></i>智能气象云
+                    </h5>
+                    <p class="text-white-50">
+                        基于机器学习的气象数据分析与预测平台，提供实时天气监控和历史数据分析。
+                    </p>
+                </div>
+
+                <div class="col-lg-2 col-6 mb-4 mb-lg-0">
+                    <h5 class="text-white mb-4">快速链接</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/api/weather/home" class="text-white-50 text-decoration-none">首页</a></li>
+                        <li class="mb-2"><a href="/visualization/dashboard" class="text-white-50 text-decoration-none">仪表盘</a></li>
+                        <li class="mb-2"><a href="/api/weather/latest" class="text-white-50 text-decoration-none">最新数据</a></li>
+                        <li><a href="/api/weather/crawl" class="text-white-50 text-decoration-none">数据采集</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-6 mb-4 mb-lg-0">
+                    <h5 class="text-white mb-4">支持城市</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><span class="text-white-50">北京</span></li>
+                        <li class="mb-2"><span class="text-white-50">上海</span></li>
+                        <li class="mb-2"><span class="text-white-50">广州</span></li>
+                        <li><span class="text-white-50">深圳</span></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3">
+                    <h5 class="text-white mb-4">联系我们</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="bi bi-envelope me-2 text-white-50"></i>
+                            <span class="text-white-50">contact@weather-ai.com</span>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-telephone me-2 text-white-50"></i>
+                            <span class="text-white-50">+86 123 4567 8910</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-geo-alt me-2 text-white-50"></i>
+                            <span class="text-white-50">北京市海淀区科技园区</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <hr class="my-4 bg-white-50">
+
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="text-white-50 mb-0">
+                        &copy; 2025 智能气象云平台. 保留所有权利.
+                    </p>
+                </div>
+                <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
+                    <a href="#" class="text-white-50 me-3">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="#" class="text-white-50 me-3">
+                        <i class="bi bi-twitter"></i>
+                    </a>
+                    <a href="#" class="text-white-50 me-3">
+                        <i class="bi bi-linkedin"></i>
+                    </a>
+                    <a href="#" class="text-white-50">
+                        <i class="bi bi-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

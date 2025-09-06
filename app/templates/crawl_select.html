@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据采集 - 城市选择</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        .select-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .select-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            padding: 30px;
+        }
+        .select-header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin: -30px -30px 30px -30px;
+            border-radius: 20px 20px 0 0;
+        }
+        .city-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .city-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            background: #f8f9fa;
+        }
+        .city-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+            color: #6a11cb;
+        }
+        .city-info {
+            flex-grow: 1;
+        }
+        .city-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .city-desc {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        .select-all {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+        }
+        .select-all:hover {
+            background: linear-gradient(135deg, #5a0dbb 0%, #1c65ec 100%);
+        }
+        .select-all .city-icon {
+            color: white;
+        }
+        .select-all .city-name {
+            color: white;
+        }
+        .select-all .city-desc {
+            color: rgba(255,255,255,0.8);
+        }
+        .back-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="select-container">
+        <div class="select-card">
+            <div class="select-header">
+                <h2><i class="bi bi-cloud-download me-2"></i>数据采集</h2>
+                <p>请选择要采集数据的城市</p>
+            </div>
+
+            <div class="city-option select-all" onclick="location.href='/api/weather/crawl'">
+                <div class="city-icon">
+                    <i class="bi bi-globe"></i>
+                </div>
+                <div class="city-info">
+                    <div class="city-name">所有支持城市</div>
+                    <div class="city-desc">采集北京、上海、广州、深圳四个城市的数据</div>
+                </div>
+                <div class="city-action">
+                    <i class="bi bi-arrow-right"></i>
+                </div>
+            </div>
+
+            <div class="city-option" onclick="location.href='/api/weather/crawl/Beijing'">
+                <div class="city-icon">
+                    <i class="bi bi-building"></i>
+                </div>
+                <div class="city-info">
+                    <div class="city-name">北京</div>
+                    <div class="city-desc">中国首都，政治文化中心</div>
+                </div>
+                <div class="city-action">
+                    <i class="bi bi-arrow-right"></i>
+                </div>
+            </div>
+
+            <div class="city-option" onclick="location.href='/api/weather/crawl/Shanghai'">
+                <div class="city-icon">
+                    <i class="bi bi-buildings"></i>
+                </div>
+                <div class="city-info">
+                    <div class="city-name">上海</div>
+                    <div class="city-desc">中国经济中心，现代化大都市</div>
+                </div>
+                <div class="city-action">
+                    <i class="bi bi-arrow-right"></i>
+                </div>
+            </div>
+
+            <div class="city-option" onclick="location.href='/api/weather/crawl/Guangzhou'">
+                <div class="city-icon">
+                    <i class="bi bi-tree"></i>
+                </div>
+                <div class="city-info">
+                    <div class="city-name">广州</div>
+                    <div class="city-desc">华南经济中心，花城</div>
+                </div>
+                <div class="city-action">
+                    <i class="bi bi-arrow-right"></i>
+                </div>
+            </div>
+
+            <div class="city-option" onclick="location.href='/api/weather/crawl/Shenzhen'">
+                <div class="city-icon">
+                    <i class="bi bi-lightning-charge"></i>
+                </div>
+                <div class="city-info">
+                    <div class="city-name">深圳</div>
+                    <div class="city-desc">科技创新中心，经济特区</div>
+                </div>
+                <div class="city-action">
+                    <i class="bi bi-arrow-right"></i>
+                </div>
+            </div>
+
+            <div class="back-button">
+                <a href="/api/weather/home" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left me-2"></i> 返回首页
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
